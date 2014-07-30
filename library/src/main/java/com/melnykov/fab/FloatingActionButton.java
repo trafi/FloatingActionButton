@@ -44,6 +44,7 @@ public class FloatingActionButton extends ImageButton {
 
     private final ScrollSettleHandler mScrollSettleHandler = new ScrollSettleHandler();
     private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
+    private AbsListView.OnScrollListener mOnScrollListenerDispatcher;
 
     public FloatingActionButton(Context context) {
         super(context);
@@ -135,7 +136,8 @@ public class FloatingActionButton extends ImageButton {
         if (mShadow) {
             LayerDrawable layerDrawable = new LayerDrawable(
                     new Drawable[]{getResources().getDrawable(R.drawable.shadow),
-                            shapeDrawable});
+                            shapeDrawable}
+            );
             int shadowSize = getDimension(
                     mType == TYPE_NORMAL ? R.dimen.fab_shadow_size : R.dimen.fab_mini_shadow_size);
             layerDrawable.setLayerInset(1, shadowSize, shadowSize, shadowSize, shadowSize);
@@ -247,6 +249,10 @@ public class FloatingActionButton extends ImageButton {
         return mType;
     }
 
+    public void setOnScrollListener(AbsListView.OnScrollListener onScrollListener) {
+        mOnScrollListenerDispatcher = onScrollListener;
+    }
+
     public void attachToListView(AbsListView listView) {
         if (listView == null) {
             throw new NullPointerException("AbsListView cannot be null.");
@@ -255,10 +261,17 @@ public class FloatingActionButton extends ImageButton {
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (mOnScrollListenerDispatcher != null) {
+                    mOnScrollListenerDispatcher.onScrollStateChanged(view, scrollState);
+                }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (mOnScrollListenerDispatcher != null) {
+                    mOnScrollListenerDispatcher.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                }
+
                 int newScrollY = getListViewScrollY();
                 if (newScrollY == mScrollY) {
                     return;
