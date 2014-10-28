@@ -184,6 +184,14 @@ public class FloatingActionButton extends ImageButton {
         return marginBottom;
     }
 
+    public void scrollUp() {
+        mScrollSettleHandler.onScroll(getHeight() + getMarginBottom());
+    }
+
+    public void scrollDown() {
+        mScrollSettleHandler.onScroll(0);
+    }
+
     private class ScrollSettleHandler extends Handler {
         private static final int TRANSLATE_DURATION_MILLIS = 200;
 
@@ -204,6 +212,7 @@ public class FloatingActionButton extends ImageButton {
                     .translationY(mSettledScrollY);
         }
     }
+
 
     public void setColorNormal(int color) {
         if (color != mColorNormal) {
